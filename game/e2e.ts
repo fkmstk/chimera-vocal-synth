@@ -100,7 +100,10 @@ await phone.goto(url, { waitUntil: "networkidle" });
 await phone.waitForFunction(() => !!(globalThis as any).__chimeraGame);
 await phone.waitForTimeout(400);
 await phone.screenshot({ path: `${out}/3-phone-title.png` });
-await phone.locator("#hw").tap({ position: { x: 60, y: 300 } }); // a pad, under the card
+// a pad, below the card: the warm-up hit must reach the lanes (the card must not cover them)
+const lanes = (await phone.locator("#hw").boundingBox())!;
+await phone.locator("#hw").tap({ position: { x: 60, y: lanes.height - 70 }, timeout: 5000 });
+await phone.waitForFunction(() => (globalThis as any).__chimeraGame.game.laneFlash[0] > 0 || (globalThis as any).__chimeraGame.game.audio.started, null, { timeout: 20000 });
 await phone.getByRole("button", { name: "START" }).click();
 await phone.waitForFunction(() => (globalThis as any).__chimeraGame.game.mode === "play", null, { timeout: 40000 });
 await phone.waitForTimeout(6000);
