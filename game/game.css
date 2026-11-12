@@ -40,11 +40,6 @@ body {
 #head, #hw { display: block; width: 100%; height: 100%; min-height: 0; }
 #hw { touch-action: none; cursor: pointer; }
 .stage { position: relative; min-width: 0; min-height: 0; border-left: 1px solid var(--frame); }
-@media (max-aspect-ratio: 1/1) {
-  #app { grid-template-columns: 1fr; grid-template-rows: 36% 64%; }
-  .stage { border-left: 0; border-top: 1px solid var(--frame); }
-}
-
 .card {
   position: absolute;
   left: 50%;
@@ -137,3 +132,28 @@ button.small { padding: 3px 12px; font-size: 15px; text-indent: 0; letter-spacin
 table { margin: 0 auto; border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
 td { padding: 2px 12px; text-align: left; color: #a9cfe6; }
 td + td { text-align: right; color: var(--text); }
+
+@media (max-aspect-ratio: 1/1) {
+  #app { grid-template-columns: 1fr; grid-template-rows: 45% 55%; }
+  .stage { border-left: 0; border-top: 1px solid var(--frame); }
+  /* the card sits at the top of the lanes and leaves the pads free, so the head above stays in view */
+  .card, .card.title { top: 8px; transform: translateX(-50%); max-height: calc(100% - 150px); padding: 12px 16px 14px; }
+  .card.banner { top: 42%; transform: translate(-50%, -50%); padding: 8px 18px; }
+  /* START first: on a short screen the text below it scrolls, the button never does */
+  .card.title { display: flex; flex-direction: column; align-items: center; max-height: calc(100% - 124px); }
+  .card.title .row { order: 1; margin: 6px 0 4px; }
+  .card.title .jp, .card.title .timing, .card.title .best { order: 2; }
+  .card h1 { font-size: 34px; margin: 0; }
+  .card h2 { font-size: 21px; margin: 2px 0; }
+  .sub { margin: 0 0 6px; font-size: 12px; }
+  .jp { margin: 6px 0; font-size: 12px; line-height: 1.6; }
+  .row { margin-top: 10px; }
+  button { padding: 9px 22px; }
+  .timing { margin-top: 8px; }
+  .rank { width: 52px; height: 52px; font-size: 32px; margin: 2px auto 4px; }
+  .score { font-size: 26px; margin-top: 4px; }
+  .card.title .kicker { display: none; }
+}
+@media (pointer: coarse) {
+  .keys, .hint { display: none; }
+}

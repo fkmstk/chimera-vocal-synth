@@ -41,6 +41,10 @@ const RED = "#ff5d40";
 const ROLE = new Map<string, BeatRole>(BEAT_SOUNDS.map((s) => [s.id, s.role]));
 const V0 = { ...V };
 const VIEW = { pressure: true, particles: true, grid: false, calipers: false };
+/** the stacked layout (game.css): the head above the lanes */
+const PORTRAIT = window.matchMedia("(max-aspect-ratio: 1/1)");
+/** a touch screen: the lanes are tapped, so the key letters are not shown */
+const TOUCH = window.matchMedia("(pointer: coarse)");
 
 /** a canvas in CSS pixels with the vector display's glow */
 class Surface {
@@ -523,7 +527,16 @@ export class Game {
     const [sx, sy] = this.shakeOffset();
     c.save();
     c.translate(sx, sy);
-    c.scale(1 / k, 1 / k);
+    if (PORTRAIT.matches) {
+      // a phone held upright: a close-up of the vocal tract (nose to larynx), as large as the
+      // canvas allows, because the whole head would leave the moving parts a few millimetres wide
+      const r = this.renderer;
+      const x0 = r.X({ x: -3.6, y: 0 }), x1 = r.X({ x: 9.6, y: 0 }), y0 = r.Y({ x: 0, y: 13.6 }), y1 = r.Y({ x: 0, y: -1.4 });
+      const z = Math.min(s.w / (x1 - x0), s.h / (y1 - y0));
+      c.translate(s.w / 2, s.h / 2);
+      c.scale(z, z);
+      c.translate(-(x0 + x1) / 2, -(y0 + y1) / 2);
+    } else c.scale(1 / k, 1 / k);
     this.renderer.draw(c, this.model, f, a, tele, VIEW, { hover: null, drag: null, dt, formants: [], slots: [], info: [] });
     c.restore();
     // the sound itself, under the chin
@@ -616,8 +629,11 @@ export class Game {
     for (let i = 0; i < 4; i++) {
       const x = xl(i), r = Math.min(24, g.laneW * 0.32);
       ring(c, x, g.hitY, r, LANE_COLOR[i], 1.3, { alpha: 0.55 + 0.45 * this.laneFlash[i], hot: this.laneFlash[i] > 0.5 });
-      label(c, LANES[i].key, x, g.hitY + r + 22, { size: 17, color: LANE_COLOR[i], align: "center", weight: "m" });
-      label(c, LANES[i].name, x, g.hitY + r + 38, { size: 9.5, color: LANE_COLOR[i], align: "center", alpha: 0.8 });
+      if (TOUCH.matches) label(c, LANES[i].name, x, g.hitY + r + 20, { size: 11, color: LANE_COLOR[i], align: "center" });
+      else {
+        label(c, LANES[i].key, x, g.hitY + r + 22, { size: 17, color: LANE_COLOR[i], align: "center", weight: "m" });
+        label(c, LANES[i].name, x, g.hitY + r + 38, { size: 9.5, color: LANE_COLOR[i], align: "center", alpha: 0.8 });
+      }
     }
     for (const r of this.rings) {
       const u = (now - r.at) / 320;

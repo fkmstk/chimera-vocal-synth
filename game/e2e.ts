@@ -95,11 +95,12 @@ const b = await run(false, "2-idle");
 console.log("idle run", JSON.stringify(b));
 
 // phone, portrait
-const phone = await browser.newPage({ viewport: { width: 390, height: 780 }, deviceScaleFactor: 2, hasTouch: true });
+const phone = await browser.newPage({ viewport: { width: 390, height: 780 }, deviceScaleFactor: 2, hasTouch: true, isMobile: true });
 await phone.goto(url, { waitUntil: "networkidle" });
 await phone.waitForFunction(() => !!(globalThis as any).__chimeraGame);
 await phone.waitForTimeout(400);
 await phone.screenshot({ path: `${out}/3-phone-title.png` });
+await phone.locator("#hw").tap({ position: { x: 60, y: 300 } }); // a pad, under the card
 await phone.getByRole("button", { name: "START" }).click();
 await phone.waitForFunction(() => (globalThis as any).__chimeraGame.game.mode === "play", null, { timeout: 40000 });
 await phone.waitForTimeout(6000);
