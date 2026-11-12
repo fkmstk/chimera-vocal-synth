@@ -1,0 +1,5 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": { "types": ["bun", "vite/client"] },
+  "include": [".", "../src/wasm", "../src/worklet", "../src/ui/analysis.ts", "../src/ui/render/anatomy.ts"]
+}

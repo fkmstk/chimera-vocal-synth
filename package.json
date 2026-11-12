@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "bun run wasm && vite --host 127.0.0.1",
     "build": "bun run wasm && tsc --noEmit && vite build",
+    "build:game": "bun run wasm && vite build -c vite.game.config.ts && mv dist-game/game.html dist-game/index.html",
     "preview": "vite preview --host 127.0.0.1",
     "test": "bun run wasm && cargo test --workspace && bun test tests",
     "typecheck": "tsc --noEmit",
